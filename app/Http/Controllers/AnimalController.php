@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Animal;
 use Illuminate\Http\Request;
 
-class ZooController extends Controller
+class AnimalController extends Controller
 {
     public function catalog()
     {
