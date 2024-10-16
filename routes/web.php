@@ -8,7 +8,7 @@ use App\Http\Controllers\HomeController;
 
 
 // Route voor de zoo catalogus
-Route::get('/catalog', [ZooController::class, 'catalogg']);
+Route::get('/catalog', [ZooController::class, 'catalog']);
 Route::get('/zoo/{id}', [ZooController::class, 'show'])->name('zoo.show');
 Route::get('/', [HomeController::class, 'index']);
 

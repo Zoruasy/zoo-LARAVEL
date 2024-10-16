@@ -23,6 +23,6 @@ class ZooController extends Controller
 
 
         // Stuur het model door naar de view
-        return view('animal.show', compact('animal'));
+        return view('show', compact('animal'));
     }
 }

@@ -4,9 +4,7 @@
         <ul>
             @foreach($animals as $animal)
                 <li>
-                    <strong>Naam:</strong> {{ $animal->name }}<br>
-                    <strong>Soort:</strong> {{ $animal->species }}<br>
-                    <strong>Habitat:</strong> {{ $animal->habitat }}<br>
+                    <a href="{{ route('zoo.show', $animal->id) }}">{{ $animal->name }}</a>
                 </li>
             @endforeach
         </ul>
