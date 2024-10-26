@@ -29,6 +29,10 @@
 
             <!-- Page Content -->
             <main>
+                <a href="{{ route('login') }}">Inloggen</a>
+                <a href="{{ route('register') }}">Registreren</a>
+                <a href="/">Home</a>
+                <a href="/catalog">Catalogus</a>
                 {{ $slot }}
             </main>
         </div>
