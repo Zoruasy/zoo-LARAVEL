@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 Route::get('/catalog', [AnimalController::class, 'catalog'])->name('catalog');
 Route::get('/zoo/{id}', [AnimalController::class, 'show'])->name('zoo.show');
 Route::get('/', [HomeController::class, 'index']);
+Route::resource('animals', AnimalController::class)->middleware('auth');
+
 
 // resource zegt die waar die voor is. het is een shortcut om het op te schrijven
 
