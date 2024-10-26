@@ -1,40 +1,48 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <title>{{ config('app.name') }}</title>
+</head>
+<body>
+<div class="min-h-screen bg-gray-100">
+    <header>
+        <nav class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <div class="relative flex items-center justify-between h-16">
+                    <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+                        <div class="hidden sm:block sm:ml-6">
+                            <div class="flex space-x-4">
+                                <a href="{{ url('/') }}" class="text-gray-900 hover:text-gray-700">Home</a>
+                                <a href="{{ url('/catalog') }}" class="text-gray-900 hover:text-gray-700">Catalog</a>
+                                <a href="{{ url('/profile') }}" class="text-gray-900 hover:text-gray-700">Profile</a>
+                            </div>
+                        </div>
                     </div>
-                </header>
-            @endisset
 
-            <!-- Page Content -->
-            <main>
-                <a href="{{ route('login') }}">Inloggen</a>
-                <a href="{{ route('register') }}">Registreren</a>
-                <a href="/">Home</a>
-                <a href="/catalog">Catalogus</a>
-                {{ $slot }}
-            </main>
-        </div>
-    </body>
+                    <!-- Authentication Links -->
+                    <div class="hidden sm:block sm:ml-6">
+                        @auth
+                            <span class="text-gray-900">Hello, {{ Auth::user()->name }}</span>
+                            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="text-gray-900 hover:text-gray-700">Logout</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="text-gray-900 hover:text-gray-700">Login</a>
+                            <a href="{{ route('register') }}" class="text-gray-900 hover:text-gray-700">Register</a>
+                        @endauth
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {{ $slot }} <!-- Render the main content from the child view -->
+    </main>
+</div>
+</body>
 </html>
