@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Animal;
@@ -17,10 +16,10 @@ class AnimalController extends Controller
         return view('catalog', compact('animals'));
     }
 
-    public function show($id)
+    public function show($id) // $id toegevoegd
     {
         // Haal het dier op op basis van het ID
-        $animal = Animal::findOrFail($id); // Gebruik findOrFail om een 404 te geven als het dier niet bestaat
+        $animal = Animal::find($id);
 
         // Stuur het model door naar de view
         return view('show', compact('animal'));
@@ -28,38 +27,35 @@ class AnimalController extends Controller
 
     public function edit($id)
     {
-        // Haal het dier op
         $animal = Animal::findOrFail($id);
 
         // Controleer of de ingelogde gebruiker de eigenaar is
-        if ($animal->user_id !== Auth::id()) {
-            return redirect()->route('animals.catalog')->with('error', 'Je hebt geen toestemming om dit item te bewerken.');
+        if (Auth::id() !== $animal->user_id) {
+            return redirect()->route('catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
         }
 
-        // Stuur het model door naar de bewerk view
-        return view('edit', compact('animal'));
+        return view('animals.edit', compact('animal'));
     }
 
     public function update(Request $request, $id)
     {
-        // Haal het dier op
         $animal = Animal::findOrFail($id);
 
         // Controleer of de ingelogde gebruiker de eigenaar is
-        if ($animal->user_id !== Auth::id()) {
-            return redirect()->route('animals.catalog')->with('error', 'Je hebt geen toestemming om dit item bij te werken.');
+        if (Auth::id() !== $animal->user_id) {
+            return redirect()->route('catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
         }
 
-        // Valideer de invoer
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            // Voeg hier andere velden toe die je wilt valideren
+            'description' => 'required|string',
         ]);
 
-        // Update het dier
-        $animal->update($validatedData);
+        // Werk het dier bij
+        $animal->update($request->only('name', 'description'));
 
-        return redirect()->route('animals.show', $animal->id)->with('success', 'Item succesvol bijgewerkt.');
+        return redirect()->route('catalog')->with('success', 'Dier succesvol bijgewerkt.');
     }
+
+
 }
