@@ -3,10 +3,11 @@
 
     @foreach ($animals as $animal)
         <div>
-            <h2>
-                <a href="{{ route('animals.show', $animal->id) }}">{{ $animal->name }}</a>
-            </h2>
-            <p>{{ $animal->description }}</p>
+
+                <h2>{{ $animal->name }}</h2>
+                <p>{{ $animal->description }}</p>
+                <a href="{{ route('zoo.show', $animal->id) }}">Bekijk dier</a>
+
 
             @auth
                 <!-- Controleer of de ingelogde gebruiker de eigenaar is, anders krijg je de link niet te zien -->
