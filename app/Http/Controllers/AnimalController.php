@@ -52,7 +52,7 @@ class AnimalController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-
+        return redirect()->route('catalog')->with('success', 'Dier succesvol toegevoegd.'); // Redirect naar catalogus
     }
 
     // Bewerk het dier
@@ -65,7 +65,7 @@ class AnimalController extends Controller
             return redirect()->route('catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
         }
 
-        return view('animals.edit', compact('animal'));
+        return view('editanimal', compact('animal')); // Zorg ervoor dat je 'animal' doorgeeft
     }
 
     // Werk het dier bij
@@ -88,7 +88,8 @@ class AnimalController extends Controller
         // Werk het dier bij
         $animal->update($request->only('name', 'species', 'habitat')); // Voeg species en habitat toe
 
-        return redirect()->route('catalog')->with('success', 'Dier succesvol bijgewerkt.');
+        // Redirect naar de catalogus met een succesmelding
+        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol bijgewerkt.'); // Voeg deze regel toe
     }
 
     // Verwijder het dier
