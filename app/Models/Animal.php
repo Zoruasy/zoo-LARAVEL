@@ -9,12 +9,14 @@ class Animal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'user_id']; // Voeg user_id toe aan fillable
+    // Vul de velden in die massaal kunnen worden ingevuld
 
+    protected $fillable = ['name', 'species', 'habitat', 'user_id'];
+
+
+    // Relatie met de User
     public function user()
     {
         return $this->belongsTo(User::class); // Relatie met de User
     }
-
-
 }

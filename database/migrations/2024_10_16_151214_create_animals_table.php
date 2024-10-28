@@ -17,9 +17,16 @@ return new class extends Migration
             $table->string('species'); // Soort
             $table->string('habitat'); // Habitat
             $table->string('image')->nullable(); // Afbeelding (optioneel)
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps(); // Created_at en Updated_at timestamps
         });
+        Schema::table('animals', function (Blueprint $table) {
+            $table->string('soort')->nullable();
+            $table->string('habitat')->nullable();
+        });
+
     }
+
 
     /**
      * Reverse the migrations.

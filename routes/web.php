@@ -1,27 +1,34 @@
 <?php
-
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Animal;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-
-// Route voor de zoo catalogus
-Route::get('/catalog', [AnimalController::class, 'catalog'])->name('catalog');
-Route::get('/zoo/{id}', [AnimalController::class, 'show'])->name('zoo.show');
+// Route voor de startpagina
 Route::get('/', [HomeController::class, 'index']);
 
+// Route voor de catalogus
+Route::get('/catalog', [AnimalController::class, 'catalog'])->name('zoo.catalog');
 
+// Route voor een specifiek dier
+Route::get('/zoo/{animal}', [AnimalController::class, 'show'])->name('zoo.show');
 
+// Routes voor het beheren van dieren
+Route::middleware(['auth'])->group(function () {
+    Route::get('/zoo/create', [AnimalController::class, 'create'])->name('zoo.create');
+    Route::post('/zoo', [AnimalController::class, 'store'])->name('zoo.store');
+    Route::get('/zoo/{animal}/edit', [AnimalController::class, 'edit'])->name('zoo.edit');
+    Route::put('/zoo/{animal}', [AnimalController::class, 'update'])->name('zoo.update');
+    Route::delete('/zoo/{animal}', [AnimalController::class, 'destroy'])->name('zoo.destroy');
+});
 
-// resource zegt die waar die voor is. het is een shortcut om het op te schrijven
-
+// Dashboard route
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Auth routes
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::middleware('auth')->group(function () {
@@ -31,3 +38,5 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+

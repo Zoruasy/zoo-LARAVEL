@@ -11,20 +11,14 @@ class AddUserIdToAnimalsTable extends Migration
      *
      * @return void
      */
+
     public function up()
     {
         Schema::table('animals', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
     }
 
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('animals', function (Blueprint $table) {
@@ -33,3 +27,6 @@ class AddUserIdToAnimalsTable extends Migration
         });
     }
 }
+
+// user_id-kolom toe en stel je de foreign key-relatie in naar de users-tabel.
+// Dit is essentieel om elk dier aan een gebruiker te koppelen.
