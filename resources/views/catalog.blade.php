@@ -57,6 +57,7 @@
                         </button>
                     </form>
 
+
                     <form action="{{ route('zoo.destroy', $animal->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')

@@ -3,12 +3,17 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth;
+
 
 
 // Publieke routes voor iedereen
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/catalog', [AnimalController::class, 'catalog'])->name('zoo.catalog');
 Route::get('/zoo/{animal}', [AnimalController::class, 'show'])->name('zoo.show');
+Route::post('/animals/{id}/toggle-status', [AnimalController::class, 'toggleStatus'])->name('animals.toggleStatus');
+
+
 
 
 
@@ -36,14 +41,14 @@ return view('admindashboard');
 // Auth routes
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-Route::post('/animals/{animal}/toggle-status', [AnimalController::class, 'toggleStatus'])->name('animals.toggleStatus');
-
-
-
-
 // Geregistreerde gebruikers kunnen profiel bewerken
 Route::middleware('auth')->group(function () {
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+
+require __DIR__.'/auth.php';
+

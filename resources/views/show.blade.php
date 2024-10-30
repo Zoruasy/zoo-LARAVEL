@@ -14,12 +14,7 @@
         @endif
     @endauth
 
-    <form action="{{ route('animals.toggleFavorite', $animal->id) }}" method="POST" style="display:inline;">
-        @csrf
-        <button type="submit">
-            {{ Auth::user()->favorites()->where('animal_id', $animal->id)->exists() ? 'Unfavorite' : 'Favorite' }}
-        </button>
-    </form>
+
 
 
 
