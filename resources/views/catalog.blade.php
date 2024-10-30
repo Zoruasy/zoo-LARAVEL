@@ -1,6 +1,45 @@
 <x-layout>
     <h1>Zoo Catalogus</h1>
 
+    <!-- Filterformulier -->
+    <form action="{{ route('zoo.catalog') }}" method="GET">
+        <!-- Zoekbalk -->
+        <div>
+            <label for="search">Zoeken:</label>
+            <input type="text" id="search" name="search" value="{{ request('search') }}">
+        </div>
+
+        <!-- Filter op soort -->
+        <div>
+            <label for="species">Soort:</label>
+            <select id="species" name="species">
+                <option value="">-- Kies een soort --</option>
+                @foreach ($speciesOptions as $species)
+                    <option value="{{ $species->species }}" {{ request('species') == $species->species ? 'selected' : '' }}>
+                        {{ $species->species }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Filter op habitat -->
+        <div>
+            <label for="habitat">Habitat:</label>
+            <select id="habitat" name="habitat">
+                <option value="">-- Kies een habitat --</option>
+                @foreach ($habitatOptions as $habitat)
+                    <option value="{{ $habitat->habitat }}" {{ request('habitat') == $habitat->habitat ? 'selected' : '' }}>
+                        {{ $habitat->habitat }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Filterknop -->
+        <button type="submit">Filter</button>
+    </form>
+
+    <!-- Lijst van dieren -->
     @foreach ($animals as $animal)
         <div>
             <h2>{{ $animal->name }}</h2>

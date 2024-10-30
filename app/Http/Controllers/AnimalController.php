@@ -8,14 +8,41 @@ use Illuminate\Support\Facades\Auth;
 
 class AnimalController extends Controller
 {
-    // Laat alle dieren zien
-    public function catalog()
+    // Laat alle dieren zien met zoek- en filterfunctionaliteit
+    public function catalog(Request $request)
     {
-        // Haal alle dieren op
-        $animals = Animal::all();
+        // Haal filterwaarden op uit de request
+        $search = $request->input('search');
+        $speciesFilter = $request->input('species');
+        $habitatFilter = $request->input('habitat');
+
+        // Bouw de query voor dieren met eventuele zoek- en filtercriteria
+        $animals = Animal::query();
+
+        // Zoek op naam
+        if ($search) {
+            $animals->where('name', 'LIKE', "%{$search}%");
+        }
+
+        // Filter op soort
+        if ($speciesFilter) {
+            $animals->where('species', $speciesFilter);
+        }
+
+        // Filter op habitat
+        if ($habitatFilter) {
+            $animals->where('habitat', $habitatFilter);
+        }
+
+        // Voer de query uit en haal de resultaten op
+        $animals = $animals->get();
+
+        // Haal de unieke waarden voor de filters op
+        $speciesOptions = Animal::select('species')->distinct()->get();
+        $habitatOptions = Animal::select('habitat')->distinct()->get();
 
         // Stuur de data door naar de view
-        return view('catalog', compact('animals'));
+        return view('catalog', compact('animals', 'speciesOptions', 'habitatOptions'));
     }
 
     // Laat één dier zien
@@ -89,7 +116,7 @@ class AnimalController extends Controller
         $animal->update($request->only('name', 'species', 'habitat')); // Voeg species en habitat toe
 
         // Redirect naar de catalogus met een succesmelding
-        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol bijgewerkt.'); // Voeg deze regel toe
+        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol bijgewerkt.');
     }
 
     // Verwijder het dier
