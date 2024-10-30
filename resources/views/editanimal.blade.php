@@ -3,7 +3,7 @@
 
     <form action="{{ route('zoo.update', $animal->id) }}" method="POST">
         @csrf
-        @method('PUT') <!-- Dit geeft aan dat we een PUT-request doen voor de update -->
+        @method('PUT')
 
         <div>
             <label for="name">Naam:</label>
