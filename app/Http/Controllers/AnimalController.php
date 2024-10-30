@@ -133,11 +133,20 @@ class AnimalController extends Controller
     // Verwijder het dier
     public function destroy($id)
     {
+        // Haal het dier op dat verwijderd moet worden
         $animal = Animal::findOrFail($id);
 
         // Controleer of de ingelogde gebruiker de eigenaar is
         if (Auth::id() !== $animal->user_id) {
             return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te verwijderen.');
+        }
+
+        // Controleer het aantal dieren dat de gebruiker heeft toegevoegd met een losse query
+        $animalCount = Animal::where('user_id', Auth::id())->count();
+
+        // Zorg ervoor dat de gebruiker minstens 3 dieren heeft toegevoegd
+        if ($animalCount <= 3) {
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'Je moet minstens 3 dieren hebben toegevoegd voordat je een dier kunt verwijderen.']);
         }
 
         // Verwijder het dier
