@@ -79,7 +79,7 @@ class AnimalController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        return redirect()->route('catalog')->with('success', 'Dier succesvol toegevoegd.'); // Redirect naar catalogus
+        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol toegevoegd.'); // Redirect naar catalogus
     }
 
     // Bewerk het dier
@@ -89,7 +89,7 @@ class AnimalController extends Controller
 
         // Controleer of de ingelogde gebruiker de eigenaar is
         if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
+            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
         }
 
         return view('editanimal', compact('animal')); // Zorg ervoor dat je 'animal' doorgeeft
@@ -102,13 +102,13 @@ class AnimalController extends Controller
 
         // Controleer of de ingelogde gebruiker de eigenaar is
         if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
+            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
         }
 
         // Valideer de invoer
         $request->validate([
             'name' => 'required|string|max:255',
-            'species' => 'required|string|max:255', // Gebruik species hier
+            'species' => 'required|string|max:255',
             'habitat' => 'required|string',
         ]);
 
@@ -126,12 +126,12 @@ class AnimalController extends Controller
 
         // Controleer of de ingelogde gebruiker de eigenaar is
         if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('catalog')->with('error', 'Je hebt geen toegang om dit dier te verwijderen.');
+            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te verwijderen.');
         }
 
         // Verwijder het dier
         $animal->delete();
 
-        return redirect()->route('catalog')->with('success', 'Dier succesvol verwijderd.');
+        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol verwijderd.');
     }
 }
