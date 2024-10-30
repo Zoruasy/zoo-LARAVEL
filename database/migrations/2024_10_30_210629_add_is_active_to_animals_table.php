@@ -11,21 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('gebruiker');
-            $table->boolean('is_favorite')->default(false);
+        Schema::table('animals', function (Blueprint $table) {
+            $table->boolean('is_active')->default(true); // Default to active
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
-    }
-
 
     /**
      * Reverse the migrations.
      */
+    public function down(): void
+    {
+        Schema::table('animals', function (Blueprint $table) {
+            $table->dropColumn('is_active');
+        });
+    }
 };

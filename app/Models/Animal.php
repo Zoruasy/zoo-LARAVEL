@@ -11,7 +11,7 @@ class Animal extends Model
 
     // Vul de velden in die massaal kunnen worden ingevuld
 
-    protected $fillable = ['name', 'species', 'habitat', 'user_id'];
+    protected $fillable = ['name', 'species', 'habitat','is_active', 'user_id'];
 
 
     // Relatie met de User

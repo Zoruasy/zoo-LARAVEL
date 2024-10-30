@@ -12,11 +12,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Voeg andere seeders toe
         $this->call(AnimalsTableSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(FavoriteAnimalsSeeder::class); // Voeg deze regel toe
 
+        // Maak een testgebruiker aan
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
     }
 }
+

@@ -48,6 +48,15 @@
             @auth
                 @if (Auth::id() === $animal->user_id)
                     <a href="{{ route('zoo.edit', $animal->id) }}">Bewerken</a>
+
+                    <!-- Toggle Button for Active/Inactive Status -->
+                    <form action="{{ route('animals.toggleStatus', $animal->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        <button type="submit">
+                            {{ $animal->is_active ? 'Deactiveer' : 'Activeer' }}
+                        </button>
+                    </form>
+
                     <form action="{{ route('zoo.destroy', $animal->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
@@ -66,6 +75,7 @@
                 <label for="name">Naam:</label>
                 <input type="text" id="name" name="name" required>
             </div>
+
             <div>
                 <label for="species">Soort:</label>
                 <input type="text" id="species" name="species" required>

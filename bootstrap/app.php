@@ -11,7 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->append(\App\Http\Middleware\AdminMiddleware::class); // Voeg je middleware hier toe
+        // Herhaal dit voor andere middleware als dat nodig is
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
