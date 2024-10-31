@@ -1,20 +1,22 @@
-
 <x-layout>
-
-@section('content')
     <div class="container">
-        <h1>Admin Dashboard</h1>
+        @if(auth()->user() && auth()->user()->isAdmin())
+            <h1>Admin Dashboard</h1>
 
-        <div class="alert alert-info">
-            Welkom bij het admin dashboard. Hier kun je de verschillende beheertaken uitvoeren.
-        </div>
+            <div class="alert alert-info">
+                Welcome to the admin dashboard. Here you can perform various management tasks.
+            </div>
 
-
-        <ul>
-            <li><a href="{{ route('zoo.catalog') }}">Bekijk de dieren catalogus</a></li>
-            <li><a href="#">Beheer gebruikers</a></li>
-            <li><a href="#">Andere admin-taken</a></li>
-        </ul>
+            <ul>
+                <li><a href="{{ route('zoo.catalog') }}">View the Animal Catalog</a></li>
+                <li><a href="#">Manage Users</a></li>
+                <li><a href="#">Other Admin Tasks</a></li>
+            </ul>
+        @else
+            <h1>Access Denied</h1>
+            <div class="alert alert-danger">
+                You do not have access to the admin dashboard.
+            </div>
+        @endif
     </div>
-@endsection
 </x-layout>

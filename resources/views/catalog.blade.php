@@ -43,7 +43,7 @@
     @foreach ($animals as $animal)
         <div>
             <h2>{{ $animal->name }}</h2>
-            <a href="{{ route('zoo.show', $animal->id) }}">Look at this animal</a> <!-- Link naar de detailpagina -->
+            <a href="{{ route('zoo.show', $animal->id) }}">See this animal!</a> <!-- Link naar de detailpagina -->
 
             @auth
                 @if (Auth::id() === $animal->user_id)

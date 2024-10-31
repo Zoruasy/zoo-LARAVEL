@@ -28,15 +28,12 @@ return [
 ];
 }
 
-// Voeg hier de isAdmin-methode toe
+
 public function isAdmin(): bool
 {
-return $this->is_admin; // Zorg ervoor dat deze kolom bestaat in je users tabel
+return $this->is_admin; // kijken of admin wel op admin staat
 }
 
-// Voeg de relatie voor favorieten toe
-public function favorites()
-{
-return $this->belongsToMany(Animal::class, 'favorite_animals', 'user_id', 'animal_id');
-}
+
+
 }
