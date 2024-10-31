@@ -5,15 +5,15 @@
     <form action="{{ route('zoo.catalog') }}" method="GET">
         <!-- Zoekbalk -->
         <div>
-            <label for="search">Zoeken:</label>
+            <label for="search">Search:</label>
             <input type="text" id="search" name="search" value="{{ request('search') }}">
         </div>
 
         <!-- Filter op soort -->
         <div>
-            <label for="species">Soort:</label>
+            <label for="species">Species:</label>
             <select id="species" name="species">
-                <option value="">-- Kies een soort --</option>
+                <option value="">-- Choose species --</option>
                 @foreach ($speciesOptions as $species)
                     <option value="{{ $species->species }}" {{ request('species') == $species->species ? 'selected' : '' }}>
                         {{ $species->species }}
@@ -26,7 +26,7 @@
         <div>
             <label for="habitat">Habitat:</label>
             <select id="habitat" name="habitat">
-                <option value="">-- Kies een habitat --</option>
+                <option value="">-- Choose habitat --</option>
                 @foreach ($habitatOptions as $habitat)
                     <option value="{{ $habitat->habitat }}" {{ request('habitat') == $habitat->habitat ? 'selected' : '' }}>
                         {{ $habitat->habitat }}
@@ -43,17 +43,17 @@
     @foreach ($animals as $animal)
         <div>
             <h2>{{ $animal->name }}</h2>
-            <a href="{{ route('zoo.show', $animal->id) }}">Bekijk dier</a> <!-- Link naar de detailpagina -->
+            <a href="{{ route('zoo.show', $animal->id) }}">Look at this animal</a> <!-- Link naar de detailpagina -->
 
             @auth
                 @if (Auth::id() === $animal->user_id)
-                    <a href="{{ route('zoo.edit', $animal->id) }}">Bewerken</a>
+                    <a href="{{ route('zoo.edit', $animal->id) }}">Edit</a>
 
                     <!-- Toggle Button for Active/Inactive Status -->
                     <form action="{{ route('animals.toggleStatus', $animal->id) }}" method="POST" style="display:inline;">
                         @csrf
                         <button type="submit">
-                            {{ $animal->is_active ? 'Deactiveer' : 'Activeer' }}
+                            {{ $animal->is_active ? 'Deactivate' : 'Activate' }}
                         </button>
                     </form>
 
@@ -61,7 +61,7 @@
                     <form action="{{ route('zoo.destroy', $animal->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Weet je zeker dat je dit dier wilt verwijderen?');">Verwijderen</button>
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this animal?');">Verwijderen</button>
                     </form>
                 @endif
             @endauth
@@ -69,23 +69,23 @@
     @endforeach
 
     @auth
-        <h2>Voeg een nieuw dier toe</h2>
+        <h2>Add new animal</h2>
         <form action="{{ route('zoo.store') }}" method="POST">
             @csrf
             <div>
-                <label for="name">Naam:</label>
+                <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
             </div>
 
             <div>
-                <label for="species">Soort:</label>
+                <label for="species">Species:</label>
                 <input type="text" id="species" name="species" required>
             </div>
             <div>
                 <label for="habitat">Habitat:</label>
                 <textarea id="habitat" name="habitat" required></textarea>
             </div>
-            <button type="submit">Voeg Dier Toe</button>
+            <button type="submit">Add new animal</button>
         </form>
     @endauth
 </x-layout>
