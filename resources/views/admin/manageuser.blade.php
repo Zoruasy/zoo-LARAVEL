@@ -1,3 +1,5 @@
+<!-- resources/views/admin/users/manageuser.blade.php -->
+
 <x-layout>
     <div class="container">
         @if(auth()->user() && auth()->user()->isAdmin())
@@ -9,10 +11,10 @@
 
             <ul>
                 <li><a href="{{ route('zoo.catalog') }}">View the Animal Catalog</a></li>
-                <li><a href="#manage-users">Manage Users</a></li> <!-- Correct anchor link -->
+                <li><a href="#manage-users">Manage Users</a></li>
             </ul>
 
-            <div id="manage-users"> <!-- Ensure this ID matches the link -->
+            <div id="manage-users">
                 <h2>Manage Users</h2>
                 <table class="table">
                     <thead>

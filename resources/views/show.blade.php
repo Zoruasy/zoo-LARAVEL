@@ -1,4 +1,4 @@
-\<x-layout>
+<x-layout>
     <h1>{{ $animal->name }}</h1>
     <p>Species: {{ $animal->species }}</p>
     <p>Habitat: {{ $animal->habitat }}</p>

@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 class User extends Authenticatable
 {
@@ -12,7 +13,8 @@ protected $fillable = [
 'name',
 'email',
 'password',
-'role', // Voeg dit toe als je een rol kolom hebt
+'is_admin', // Add this property to allow mass assignment
+// 'role', // Comment this out if not needed, or include if you're using roles
 ];
 
 protected $hidden = [
@@ -20,20 +22,15 @@ protected $hidden = [
 'remember_token',
 ];
 
-protected function casts(): array
-{
-return [
+protected $casts = [
 'email_verified_at' => 'datetime',
+'is_admin' => 'boolean', // Cast is_admin to boolean
 'password' => 'hashed',
 ];
-}
 
-
+// Method to check if the user is an admin
 public function isAdmin(): bool
 {
-return $this->is_admin; // kijken of admin wel op admin staat
+return $this->is_admin; // This will now work correctly
 }
-
-
-
 }
