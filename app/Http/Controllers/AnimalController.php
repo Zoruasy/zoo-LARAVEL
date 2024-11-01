@@ -79,7 +79,15 @@ class AnimalController extends Controller
             'name' => 'required|string|max:255',
             'species' => 'required|string|max:255',
             'habitat' => 'required|string',
+            'image' => 'image|nullable|max:1999', // Add image validation
         ]);
+
+        // Handle the image upload
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imagePath = $file->store('images', 'public'); // Store in the public/images directory
+        }
 
         // Maak een nieuw dier aan en koppel het aan de ingelogde gebruiker
         Animal::create([
@@ -88,6 +96,7 @@ class AnimalController extends Controller
             'habitat' => $request->input('habitat'),
             'user_id' => Auth::id(),
             'is_active' => true, // Standaard actief instellen
+            'image_path' => $imagePath, // Save the image path
         ]);
 
         return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol toegevoegd.'); // Redirect naar catalogus
@@ -103,7 +112,7 @@ class AnimalController extends Controller
             return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
         }
 
-        return view('editanimal', compact('animal')); // Zorg ervoor dat je 'animal' doorgeeft
+        return view('animals.edit', compact('animal')); // Zorg ervoor dat je 'animal' doorgeeft
     }
 
     // Werk het dier bij
@@ -121,10 +130,18 @@ class AnimalController extends Controller
             'name' => 'required|string|max:255',
             'species' => 'required|string|max:255',
             'habitat' => 'required|string',
+            'image' => 'image|nullable|max:1999', // Add image validation
         ]);
 
+        // Handle the image upload
+        $imagePath = $animal->image_path; // Keep the existing image path by default
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imagePath = $file->store('images', 'public'); // Store the new image
+        }
+
         // Werk het dier bij
-        $animal->update($request->only('name', 'species', 'habitat'));
+        $animal->update($request->only('name', 'species', 'habitat') + ['image_path' => $imagePath]); // Update with new image path
 
         // Redirect naar de catalogus met een succesmelding
         return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol bijgewerkt.');

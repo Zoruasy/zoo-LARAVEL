@@ -43,6 +43,9 @@
     @foreach ($animals as $animal)
         <div>
             <h2>{{ $animal->name }}</h2>
+            <!-- Afbeelding van het dier -->
+            <img src="{{ asset('images/' . $animal->image) }}" alt="{{ $animal->name }}" style="width: 200px; height: auto;">
+
             <a href="{{ route('zoo.show', $animal->id) }}">See this animal!</a> <!-- Link naar de detailpagina -->
 
             @auth
@@ -56,7 +59,6 @@
                             {{ $animal->is_active ? 'Deactivate' : 'Activate' }}
                         </button>
                     </form>
-
 
                     <form action="{{ route('zoo.destroy', $animal->id) }}" method="POST" style="display:inline;">
                         @csrf

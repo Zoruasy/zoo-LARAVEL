@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         // Voeg andere seeders toe
         $this->call(AnimalsTableSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(FavoriteAnimalsSeeder::class); // Voeg deze regel toe
+
 
         // Maak een testgebruiker aan
         User::factory()->create([
