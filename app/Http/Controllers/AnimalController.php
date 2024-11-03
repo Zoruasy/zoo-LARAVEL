@@ -1,24 +1,27 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class AnimalController extends Controller
 {
-    // Laat alle dieren zien met zoek- en filterfunctionaliteit
+    // Show all animals with search and filter functionality
     public function catalog(Request $request)
     {
-        // Haal filterwaarden op uit de request
+        // Get filter values from the request
         $search = $request->input('search');
         $speciesFilter = $request->input('species');
         $habitatFilter = $request->input('habitat');
 
-        // Bouw de query voor dieren met eventuele zoek- en filtercriteria
+        // Build the query for animals with optional search and filter criteria
         $animals = Animal::query();
 
-        // Controleer of de gebruiker is ingelogd
+        // Check if the user is logged in
         if (Auth::check()) {
             $animals->where(function ($query) {
                 $query->where('is_active', true)
@@ -28,144 +31,167 @@ class AnimalController extends Controller
             $animals->where('is_active', true);
         }
 
-        // Zoek op naam
+        // Search by name
         if ($search) {
             $animals->where('name', 'LIKE', "%{$search}%");
         }
 
-        // Filter op soort
+        // Filter by species
         if ($speciesFilter) {
             $animals->where('species', $speciesFilter);
         }
 
-        // Filter op habitat
+        // Filter by habitat
         if ($habitatFilter) {
             $animals->where('habitat', $habitatFilter);
         }
 
-        // Voer de query uit en haal de resultaten op
+        // Execute the query and retrieve the results
         $animals = $animals->get();
 
-        // Haal de unieke waarden voor de filters op
+        // Get unique values for filters
         $speciesOptions = Animal::select('species')->distinct()->get();
         $habitatOptions = Animal::select('habitat')->distinct()->get();
 
         return view('catalog', compact('animals', 'speciesOptions', 'habitatOptions'));
     }
 
-    // Laat één dier zien
+    // Show one animal
     public function show($id)
     {
         $animal = Animal::findOrFail($id);
         return view('show', compact('animal'));
     }
 
-    // Toon het formulier om een nieuw dier toe te voegen
+    // Show the form to add a new animal
     public function create()
     {
+        // Check if the user is an admin
+        if (Auth::user()->role !== 'admin') {
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'You do not have permission to add a new animal.']);
+        }
+
         return view('animals.create');
     }
 
-    // Sla het nieuwe dier op in de database
+    // Save the new animal to the database
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'species' => 'required|string|max:255',
             'habitat' => 'required|string',
-            'image' => 'image|nullable|max:1999', // Validatie voor afbeeldingen
+            'image' => 'image|nullable|max:1999', // Validation for images
         ]);
 
-        $animal = Animal::create([
+        $animalData = [
             'name' => $request->input('name'),
             'species' => $request->input('species'),
             'habitat' => $request->input('habitat'),
             'user_id' => Auth::id(),
             'is_active' => true,
-        ]);
+        ];
 
-        Log::info('Nieuw dier toegevoegd door gebruiker ID: ' . Auth::id(), ['animal_id' => $animal->id]);
+        // Save image
+        if ($request->hasFile('image')) {
+            $animalData['image'] = $request->file('image')->store('images', 'public');
+        }
 
-        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol toegevoegd.');
+        $animal = Animal::create($animalData);
+
+        Log::info('New animal added by user ID: ' . Auth::id(), ['animal_id' => $animal->id]);
+
+        return redirect()->route('zoo.catalog')->with('success', 'Animal successfully added.');
     }
 
-    // Bewerk het dier
+    // Edit the animal
     public function edit($id)
     {
         $animal = Animal::findOrFail($id);
 
-        // Controleer of de ingelogde gebruiker de eigenaar is
-        if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
+        // Check if the user is the owner or an admin
+        if ($animal->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'You do not have permission to edit this animal.']);
         }
 
-        return view('animals.edit', compact('animal'));
+        return view('editanimal', compact('animal'));
     }
 
-    // Werk het dier bij
+    // Update the animal
     public function update(Request $request, $id)
     {
         $animal = Animal::findOrFail($id);
 
-        if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te bewerken.');
+        // Check if the user is the owner or an admin
+        if ($animal->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'You do not have permission to update this animal.']);
         }
 
         $request->validate([
             'name' => 'required|string|max:255',
             'species' => 'required|string|max:255',
             'habitat' => 'required|string',
-            'image' => 'image|nullable|max:1999', // Validatie voor afbeeldingen
+            'image' => 'image|nullable|max:1999', // Validation for images
         ]);
 
-        $imagePath = $animal->image_path; // Huidige afbeelding behouden
+        $animalData = $request->only('name', 'species', 'habitat');
+
+        // Save image
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $imagePath = $file->store('images', 'public'); // Nieuwe afbeelding opslaan
+            if ($animal->image) {
+                Storage::disk('public')->delete($animal->image);
+            }
+            $animalData['image'] = $request->file('image')->store('images', 'public');
         }
 
-        $animal->update($request->only('name', 'species', 'habitat') + ['image_path' => $imagePath]);
+        $animal->update($animalData);
 
-        Log::info('Dier bijgewerkt door gebruiker ID: ' . Auth::id(), ['animal_id' => $animal->id]);
+        Log::info('Animal updated by user ID: ' . Auth::id(), ['animal_id' => $animal->id]);
 
-        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol bijgewerkt.');
+        return redirect()->route('zoo.catalog')->with('success', 'Animal successfully updated.');
     }
 
-    // Verwijder het dier
+    // Delete the animal
     public function destroy($id)
     {
         $animal = Animal::findOrFail($id);
 
-        if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om dit dier te verwijderen.');
+        // Check if the user is the owner or an admin
+        if ($animal->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'You do not have permission to delete this animal.']);
         }
 
-        // Zorg ervoor dat de gebruiker minstens 3 dieren heeft toegevoegd
+        // Check if the user has added at least 3 animals
         $animalCount = Animal::where('user_id', Auth::id())->count();
         if ($animalCount <= 3) {
-            return redirect()->route('zoo.catalog')->withErrors(['error' => 'Je moet minstens 3 dieren hebben toegevoegd voordat je een dier kunt verwijderen.']);
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'You must have added at least 3 animals before you can delete one.']);
+        }
+
+        if ($animal->image) {
+            Storage::disk('public')->delete($animal->image);
         }
 
         $animal->delete();
-        Log::info('Dier verwijderd door gebruiker ID: ' . Auth::id(), ['animal_id' => $animal->id]);
+        Log::info('Animal deleted by user ID: ' . Auth::id(), ['animal_id' => $animal->id]);
 
-        return redirect()->route('zoo.catalog')->with('success', 'Dier succesvol verwijderd.');
+        return redirect()->route('zoo.catalog')->with('success', 'Animal successfully deleted.');
     }
 
-    // Toggle de actieve/inactieve status van een dier
+    // Toggle the active/inactive status of an animal
     public function toggleStatus($id)
     {
         $animal = Animal::findOrFail($id);
 
-        if (Auth::id() !== $animal->user_id) {
-            return redirect()->route('zoo.catalog')->with('error', 'Je hebt geen toegang om de status van dit dier te wijzigen.');
+        // Check if the user is the owner or an admin
+        if ($animal->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return redirect()->route('zoo.catalog')->withErrors(['error' => 'You do not have permission to change the status of this animal.']);
         }
 
         $animal->is_active = !$animal->is_active;
         $animal->save();
 
-        Log::info('Status van dier gewijzigd door gebruiker ID: ' . Auth::id(), ['animal_id' => $animal->id]);
+        Log::info('Status of animal changed by user ID: ' . Auth::id(), ['animal_id' => $animal->id]);
 
-        return redirect()->route('zoo.catalog')->with('success', 'Status van het dier succesvol bijgewerkt.');
+        return redirect()->route('zoo.catalog')->with('success', 'Animal status successfully updated.');
     }
 }

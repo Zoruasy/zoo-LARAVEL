@@ -10,10 +10,16 @@
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
+                @if ($errors->has('name'))
+                    <div class="text-danger">{{ $errors->first('name') }}</div>
+                @endif
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+                @if ($errors->has('email'))
+                    <div class="text-danger">{{ $errors->first('email') }}</div>
+                @endif
             </div>
             <button type="submit" class="btn btn-success">Update User</button>
         </form>

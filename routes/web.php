@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
+
 // Public routes for everyone
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/catalog', [AnimalController::class, 'catalog'])->name('zoo.catalog');
@@ -19,7 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/zoo/create', [AnimalController::class, 'create'])->name('zoo.create');
     Route::post('/zoo', [AnimalController::class, 'store'])->name('zoo.store');
     Route::get('/zoo/{animal}/edit', [AnimalController::class, 'edit'])->name('zoo.edit');
-    Route::put('/zoo/{animal}', [AnimalController::class, 'update'])->name('zoo.update');
+    Route::put('/zoo/{animal}', [AnimalController::class, 'update'])->name('zoo.update'); // Use PUT here
     Route::delete('/zoo/{animal}', [AnimalController::class, 'destroy'])->name('zoo.destroy');
 });
 
@@ -32,8 +33,7 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'showAdminDashboard'])->name('admin.dashboard');
 
-
-    // User management routes
+// User management routes
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
@@ -46,7 +46,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 // Registered users can edit profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update'); // Use PUT here
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

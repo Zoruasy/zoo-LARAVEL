@@ -24,7 +24,6 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            // Andere validaties die je nodig hebt
         ]);
 
         // Werk de gebruiker bij
