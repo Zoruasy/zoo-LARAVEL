@@ -1,54 +1,55 @@
-<!-- resources/views/admin/users/manageuser.blade.php -->
-
 <x-layout>
     <div class="container">
-        @if(auth()->user() && auth()->user()->isAdmin())
-            <h1>Admin Dashboard</h1>
+        <h1>Manage Users</h1>
 
-            <div class="alert alert-info">
-                Welcome to the admin dashboard. Here you can perform various management tasks.
+        @if(isset($user)) {{-- Check if we are editing a user --}}
+        <h2>Edit User: {{ $user->name }}</h2>
+        <form action="{{ route('admin.users.update', $user) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
             </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
+            </div>
+            <button type="submit" class="btn btn-success">Update User</button>
+        </form>
+        <hr>
+        @endif
 
-            <ul>
-                <li><a href="{{ route('zoo.catalog') }}">View the Animal Catalog</a></li>
-                <li><a href="#manage-users">Manage Users</a></li>
-            </ul>
-
-            <div id="manage-users">
-                <h2>Manage Users</h2>
-                <table class="table">
-                    <thead>
+        @if(isset($users) && $users->isNotEmpty())
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Admin</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($users as $user)
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Admin</th>
-                        <th>Actions</th>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td>{{ $user->role === 'admin' ? 'Yes' : 'No' }}</td>
+                        <td>
+                            <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-primary">Edit</a>
+                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($users as $user)
-                        <tr>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->is_admin ? 'Yes' : 'No' }}</td>
-                            <td>
-                                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-primary">Edit</a>
-                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div>
+                @endforeach
+                </tbody>
+            </table>
         @else
-            <h1>Access Denied</h1>
-            <div class="alert alert-danger">
-                You do not have access to the admin dashboard.
-            </div>
+            <div class="alert alert-warning">No users found.</div>
         @endif
     </div>
 </x-layout>

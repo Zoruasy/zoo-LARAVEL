@@ -1,60 +1,42 @@
-<?php
-
-namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    // Display a list of users
-    public function index()
-    {
-        $this->authorizeAdmin();
+public function index()
+{
+// Haal alle gebruikers op en geef ze door aan de manageuser view
+$users = User::all();
+return view('admin.manageuser', compact('users')); // Update naar manageuser
+}
 
-        // Get all users
-        $users = User::all();
-        return view('admin.manageuser', compact('users')); // Updated to the new view name
-    }
+public function edit(User $user)
+{
+// Haal alle gebruikers op voor de table en geef de specifieke gebruiker door
+$users = User::all();
+return view('admin.manageuser', compact('users', 'user')); // Geef de gebruiker mee voor de bewerking
+}
 
-    // Show the edit form for a user
-    public function edit(User $user)
-    {
-        $this->authorizeAdmin();
+public function update(Request $request, User $user)
+{
+// Valideer de invoer
+$request->validate([
+'name' => 'required|string|max:255',
+'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+// Andere validaties die je nodig hebt
+]);
 
-        return view('profile.edit', compact('user')); // Updated to the correct path
-    }
+// Werk de gebruiker bij
+$user->update($request->all());
 
-    // Update user details
-    public function update(Request $request, User $user)
-    {
-        $this->authorizeAdmin();
+return redirect()->route('admin.users.index')->with('success', 'Gebruiker succesvol bijgewerkt.');
+}
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'is_admin' => 'required|boolean',
-        ]);
-
-        $user->update($request->only(['name', 'email', 'is_admin'])); // Use only to update specific fields
-
-        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
-    }
-
-    // Delete a user
-    public function destroy(User $user)
-    {
-        $this->authorizeAdmin();
-
-        $user->delete(); // Delete the user
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
-    }
-
-    // Custom method to authorize admin
-    private function authorizeAdmin()
-    {
-        if (!auth()->check() || !auth()->user()->is_admin) {
-            return redirect('/')->with('error', 'You are not authorized to access this page.');
-        }
-    }
+public function destroy(User $user)
+{
+$user->delete();
+return redirect()->route('admin.users.index')->with('success', 'Gebruiker succesvol verwijderd.');
+}
 }
