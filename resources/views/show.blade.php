@@ -15,8 +15,5 @@
     @endauth
 
 
-
-
-
     <a href="{{ route('zoo.catalog') }}">Terug naar catalogus</a>
 </x-layout>

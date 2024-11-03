@@ -18,6 +18,9 @@
                                 <a href="{{ url('/') }}" class="text-gray-900 hover:text-gray-700">Home</a>
                                 <a href="{{ url('/catalog') }}" class="text-gray-900 hover:text-gray-700">Catalog</a>
                                 <a href="{{ url('/profile') }}" class="text-gray-900 hover:text-gray-700">Profile</a>
+                                @if(auth()->check() && auth()->user()->is_admin)
+                                    <a href="{{ route('admin.dashboard') }}" class="text-gray-900 hover:text-gray-700">Admin Dashboard</a>
+                                @endif
                             </div>
                         </div>
                     </div>
