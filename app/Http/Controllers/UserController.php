@@ -5,38 +5,37 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-public function index()
-{
-// Haal alle gebruikers op en geef ze door aan de manageuser view
-$users = User::all();
-return view('admin.manageuser', compact('users')); // Update naar manageuser
-}
+    public function index()
+    {
+        // Haal alle gebruikers op en geef ze door aan de manageuser view
+        $users = User::all();
+        return view('admin.manageuser', compact('users')); // Toon alle gebruikers
+    }
 
-public function edit(User $user)
-{
-// Haal alle gebruikers op voor de table en geef de specifieke gebruiker door
-$users = User::all();
-return view('admin.manageuser', compact('users', 'user')); // Geef de gebruiker mee voor de bewerking
-}
+    public function edit(User $user)
+    {
+        // Retourneer de edit view voor de specifieke gebruiker
+        return view('admin.edituser', compact('user')); // Zorg ervoor dat deze view bestaat
+    }
 
-public function update(Request $request, User $user)
-{
-// Valideer de invoer
-$request->validate([
-'name' => 'required|string|max:255',
-'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-// Andere validaties die je nodig hebt
-]);
+    public function update(Request $request, User $user)
+    {
+        // Valideer de invoer
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            // Andere validaties die je nodig hebt
+        ]);
 
-// Werk de gebruiker bij
-$user->update($request->all());
+        // Werk de gebruiker bij
+        $user->update($request->all());
 
-return redirect()->route('admin.users.index')->with('success', 'Gebruiker succesvol bijgewerkt.');
-}
+        return redirect()->route('admin.users.index')->with('success', 'Gebruiker succesvol bijgewerkt.');
+    }
 
-public function destroy(User $user)
-{
-$user->delete();
-return redirect()->route('admin.users.index')->with('success', 'Gebruiker succesvol verwijderd.');
-}
+    public function destroy(User $user)
+    {
+        $user->delete();
+        return redirect()->route('admin.users.index')->with('success', 'Gebruiker succesvol verwijderd.');
+    }
 }
