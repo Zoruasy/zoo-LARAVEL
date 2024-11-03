@@ -15,7 +15,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         // Retourneer de edit view voor de specifieke gebruiker
-        return view('admin.edituser', compact('user')); // Zorg ervoor dat deze view bestaat
+        return view('admin.manageuser', compact('user')); // Zorg ervoor dat deze view bestaat
     }
 
     public function update(Request $request, User $user)
