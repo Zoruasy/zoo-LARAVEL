@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class AnimalController extends Controller
 {
     // Show all animals with search and filter functionality
-    public function catalog(Request $request)
+    public function catalog(Request $request) // haalt de lijst van dieren met zoek en filter functie
     {
         // Get filter values from the request
         $search = $request->input('search');
@@ -35,6 +35,8 @@ class AnimalController extends Controller
         if ($search) {
             $animals->where('name', 'LIKE', "%{$search}%");
         }
+// lijst met dieren word opgehaald, like is minder streng dan wat moet kloppen
+// de % staat voor dat er achter de voor en na de term iets kan staan dus bv zwarte leeuw
 
         // Filter by species
         if ($speciesFilter) {
@@ -176,6 +178,7 @@ class AnimalController extends Controller
 
         return redirect()->route('zoo.catalog')->with('success', 'Animal successfully deleted.');
     }
+    // wijzigt de status van een dier (actief of niet actief) en logt deze wijziging.
 
     // Toggle the active/inactive status of an animal
     public function toggleStatus($id)

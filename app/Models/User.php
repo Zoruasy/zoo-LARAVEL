@@ -14,7 +14,7 @@ protected $fillable = [
 'email',
 'password',
 'is_admin', // Add this property to allow mass assignment
-// 'role', // Comment this out if not needed, or include if you're using roles
+
 ];
 
 protected $hidden = [
@@ -31,6 +31,6 @@ protected $casts = [
 // Method to check if the user is an admin
 public function isAdmin(): bool
 {
-return $this->is_admin; // This will now work correctly
+return $this->is_admin;
 }
 }
