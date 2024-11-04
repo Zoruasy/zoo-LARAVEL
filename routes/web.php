@@ -8,7 +8,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
-
 // Public routes for everyone
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/catalog', [AnimalController::class, 'catalog'])->name('zoo.catalog');
@@ -22,22 +21,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/zoo/{animal}/edit', [AnimalController::class, 'edit'])->name('zoo.edit');
     Route::put('/zoo/{animal}', [AnimalController::class, 'update'])->name('zoo.update'); // Use PUT here
     Route::delete('/zoo/{animal}', [AnimalController::class, 'destroy'])->name('zoo.destroy');
-});
 
-// Route for the general dashboard (only for logged-in users)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    // Route for the general dashboard (only for logged-in users)
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Admin routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'showAdminDashboard'])->name('admin.dashboard');
-
-// User management routes
-    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    // Admin routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard'); // Admin dashboard
+        Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users.index'); // List users
+        Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit'); // Edit user
+        Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update'); // Update user
+        Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy'); // Delete user
+    });
 });
 
 // Auth routes

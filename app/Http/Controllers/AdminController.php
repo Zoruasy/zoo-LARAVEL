@@ -2,23 +2,81 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function showAdminDashboard()
+    // Method for the admin dashboard
+    public function dashboard()
     {
-        // Check if the user is authenticated and is an admin
-        if (!auth()->check() || !auth()->user()->is_admin) {
-            Log::warning('Unauthorized access attempt to admin dashboard by user ID: ' . (auth()->check() ? auth()->user()->id : 'Guest'));
-            return redirect('/')->with('error', 'Toegang geweigerd. Je hebt geen toestemming om deze pagina te bekijken.'); // Redirect to the home page with an error message
+        // Check if the logged-in user is an admin
+        if (Auth::user() && Auth::user()->isAdmin()) {
+            // Retrieve all users
+            $users = User::all();
+            return view('admindashboard', compact('users'));
         }
 
-        // Fetch all users to pass to the view
-        $users = User::all();
+        // Return the access denied view without .blade.php extension
+        return view('access-denied');
+    }
 
-        return view('admindashboard', compact('users')); // Pass the users to the admin dashboard view
+    // Method for listing all users
+    public function index()
+    {
+        // Check if the logged-in user is an admin
+        if (Auth::user() && Auth::user()->isAdmin()) {
+            // Retrieve all users
+            $users = User::all();
+            return view('admin.manageuser', compact('users'));
+        }
+
+        // Return the access denied view without .blade.php extension
+        return view('access-denied');
+    }
+
+    // Method for editing a user
+    public function editUser(User $user)
+    {
+        // Check if the logged-in user is an admin
+        if (Auth::user() && Auth::user()->isAdmin()) {
+            return view('admin.manageuser', compact('user'));
+        }
+
+        // Return the access denied view without .blade.php extension
+        return view('access-denied');
+    }
+
+    // Method for updating a user
+    public function updateUser(Request $request, User $user)
+    {
+        // Validate the input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'is_admin' => 'boolean',
+        ]);
+
+        // Update the user
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->is_admin = $request->input('is_admin', false);
+        $user->save();
+
+        return redirect()->route('admin.dashboard')->with('success', 'User successfully updated.');
+    }
+
+    // Method for deleting a user
+    public function destroyUser(User $user)
+    {
+        // Check if the logged-in user is an admin
+        if (Auth::user() && Auth::user()->isAdmin()) {
+            $user->delete();
+            return redirect()->route('admin.dashboard')->with('success', 'User successfully deleted.');
+        }
+
+        // Return the access denied view without .blade.php extension
+        return view('access-denied');
     }
 }

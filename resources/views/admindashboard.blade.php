@@ -2,17 +2,21 @@
     <div class="container">
         @if(auth()->user() && auth()->user()->isAdmin())
             <h1>Admin Dashboard</h1>
-
             <div class="alert alert-info">
                 Welcome to the admin dashboard. Here you can perform various management tasks.
             </div>
-
             <ul>
                 <li><a href="{{ route('zoo.catalog') }}">View the Animal Catalog</a></li>
-                <li><a href="#">Manage Users</a></li>
                 <li><a href="#">Other Admin Tasks</a></li>
                 <li><a href="#manage-users">Manage Users</a></li>
             </ul>
+
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div id="manage-users">
                 <h2>Manage Users</h2>
                 <table class="table">

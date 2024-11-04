@@ -27,6 +27,7 @@
         @endif
 
         @if(isset($users) && $users->isNotEmpty())
+            <h2>All Users</h2>
             <table class="table">
                 <thead>
                 <tr>
@@ -41,7 +42,7 @@
                     <tr>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->role === 'admin' ? 'Yes' : 'No' }}</td>
+                        <td>{{ $user->is_admin ? 'Yes' : 'No' }}</td>
                         <td>
                             <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-primary">Edit</a>
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display:inline;">
