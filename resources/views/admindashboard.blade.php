@@ -7,8 +7,7 @@
             </div>
             <ul>
                 <li><a href="{{ route('zoo.catalog') }}">View the Animal Catalog</a></li>
-                <li><a href="#">Other Admin Tasks</a></li>
-                <li><a href="#manage-users">Manage Users</a></li>
+
             </ul>
 
             @if(session('success'))
